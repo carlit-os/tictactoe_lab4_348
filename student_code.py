@@ -85,7 +85,7 @@ def agentX(curr_board, stats):
     for state in next_moves:
         stats.set_board(state)
         if stats.is_terminal():
-            break
+            return stats.get_outcome()
         v = closer_to1([v, agentO(state, stats)])
 
     return v
@@ -98,7 +98,7 @@ def agentO(curr_board, stats):
     for state in next_moves:
         stats.set_board(state)
         if stats.is_terminal():
-            break
+            return stats.get_outcome()
         v = closer_to2([v, agentX(state, stats)])
 
     return v
@@ -115,11 +115,11 @@ def minmax_tictactoe(board, turn):
         return minmax_stats.get_outcome()
 
     if turn == 1:  # x goes first
-        agentX(minmax_stats.get_board(), minmax_stats)
+        return agentX(minmax_stats.get_board(), minmax_stats)
     else:  # o goes first
-        agentO(minmax_stats.get_board(), minmax_stats)
+        return agentO(minmax_stats.get_board(), minmax_stats)
 
-    return minmax_stats.get_outcome()
+
 
 
 def abprun_tictactoe(board, turn):
