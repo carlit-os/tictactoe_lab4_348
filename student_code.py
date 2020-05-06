@@ -25,6 +25,7 @@ class game_stats:
         self.outcome = None
         self.turn = turn
         self.board = board
+        self.value = None
 
     def is_terminal(self):
         status = common.game_status(self.board)
@@ -53,6 +54,12 @@ class game_stats:
     def set_board(self, fresh_board):
         self.board = fresh_board
 
+    def set_value(self, fresh_val):
+        self.value = fresh_val
+
+    def get_value(self):
+        return self.value
+
 
 def closer_to1(outcomes):
     if 1 in outcomes:
@@ -80,30 +87,25 @@ def closer_to2(outcomes):
 
 def agentX(curr_board, stats):
     stats.set_board(curr_board)
-    v = float("inf")
-    next_moves = possible_moves(curr_board, 1)
+    if stats.is_terminal():
+        return stats.get_outcome()
+    else:
+        v = float("-inf")
 
-    for state in next_moves:
-        stats.set_board(state)
-        if stats.is_terminal():
-            return stats.get_outcome()
-        v = closer_to1([v, agentO(state, stats)])
-
-    return v
+        for state in possible_moves(curr_board, 1):
+            v = closer_to1([v, agentO(state, stats)])
+        return v
 
 
 def agentO(curr_board, stats):
     stats.set_board(curr_board)
-    v = float("-inf")
-    next_moves = possible_moves(curr_board, 2)
-
-    for state in next_moves:
-        stats.set_board(state)
-        if stats.is_terminal():
-            return stats.get_outcome()
-        v = closer_to2([v, agentX(state, stats)])
-
-    return v
+    if stats.is_terminal():
+        return stats.get_outcome()
+    else:
+        v = float("inf")
+        for state in possible_moves(curr_board, 2):
+            v = closer_to2([v, agentX(state, stats)])
+        return v
 
 
 def minmax_tictactoe(board, turn):
@@ -113,10 +115,7 @@ def minmax_tictactoe(board, turn):
     # track of the number of boards evaluated result = common.game_status(board);
     minmax_stats = game_stats(board, turn)
 
-    if minmax_stats.is_terminal():
-        return minmax_stats.get_outcome()
-
-    if turn == 1:  # x goes first
+    if turn == common.constants.X:  # x goes first
         return agentX(minmax_stats.get_board(), minmax_stats)
     else:  # o goes first
         return agentO(minmax_stats.get_board(), minmax_stats)
