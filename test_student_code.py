@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from student_code import game_stats, possible_moves
+from student_code import game_stats, possible_moves, closer_to1, closer_to2
 
 
 class Testgame_stats(TestCase):
@@ -56,3 +56,21 @@ class Test(TestCase):
         self.assertTrue(
             [[1, 2, 1, 2, 1, 1, 2, 1, 0], [0, 2, 1, 2, 1, 1, 2, 1, 1]] == possible_moves([0, 2, 1, 2, 1, 1, 2, 1, 0],
                                                                                          1))
+
+
+class Test(TestCase):
+    def test_closer_to1(self):
+        self.assertTrue(1 == closer_to1([1, 1, 2, 0, 1, float("inf"), 1]))
+        self.assertTrue(0 == closer_to1([2, 0, float("inf")]))
+        self.assertTrue(2 == closer_to1([2, float("inf")]))
+        self.assertTrue(float("inf") == closer_to1([float("inf")]))
+
+
+class Test(TestCase):
+    def test_closer_to2(self):
+        self.assertTrue(2 == closer_to2([1, 1, 2, 0, 1, float("inf"), 1]))
+        self.assertTrue(2 == closer_to2([2, 0, float("inf")]))
+        self.assertTrue(2 == closer_to2([2, float("inf")]))
+        self.assertTrue(float("-inf") == closer_to2([float("-inf")]))
+        self.assertTrue(0 == closer_to2([1, 0, float("inf")]))
+        self.assertTrue(1 == closer_to2([1, float("inf")]))

@@ -22,7 +22,7 @@ def possible_moves(board, player):
 
 class game_stats:
     def __init__(self, board, turn):
-        self.outcome = 0
+        self.outcome = None
         self.turn = turn
         self.board = board
 
@@ -79,6 +79,7 @@ def closer_to2(outcomes):
 
 
 def agentX(curr_board, stats):
+    stats.set_board(curr_board)
     v = float("inf")
     next_moves = possible_moves(curr_board, 1)
 
@@ -92,6 +93,7 @@ def agentX(curr_board, stats):
 
 
 def agentO(curr_board, stats):
+    stats.set_board(curr_board)
     v = float("-inf")
     next_moves = possible_moves(curr_board, 2)
 
@@ -118,8 +120,6 @@ def minmax_tictactoe(board, turn):
         return agentX(minmax_stats.get_board(), minmax_stats)
     else:  # o goes first
         return agentO(minmax_stats.get_board(), minmax_stats)
-
-
 
 
 def abprun_tictactoe(board, turn):
