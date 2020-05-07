@@ -90,18 +90,34 @@ def prune_to1(outcomes):
 
 def v_beta(v, beta):
     value = 0
-
+    b = 0
     if v == 2:
         value = -1
-    return value >= beta
+    else:
+        value = v
+
+    if beta == 2:
+        b = -1
+    else:
+        b = beta
+
+    return value >= b
 
 
 def v_alpha(v, alpha):
     value = 0
-
+    a = 0
     if v == 2:
         value = -1
-    return value <= alpha
+    else:
+        value = v
+
+    if alpha == 2:
+        a = -1
+    else:
+        a = alpha
+
+    return value <= a
 
 
 def prune_to2(outcomes):
