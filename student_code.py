@@ -88,6 +88,22 @@ def prune_to1(outcomes):
     pass
 
 
+def v_beta(v, beta):
+    value = 0
+
+    if v == 2:
+        value = -1
+    return value >= beta
+
+
+def v_alpha(v, alpha):
+    value = 0
+
+    if v == 2:
+        value = -1
+    return value <= alpha
+
+
 def prune_to2(outcomes):
     if float("-inf") in outcomes:
         return float("-inf")
@@ -158,7 +174,7 @@ def pruneX(curr_board, alpha, beta, stats):
         v = float("-inf")
         for state in possible_moves(curr_board, 1):
             v = prune_to1([v, pruneO(state, alpha, beta, stats)])
-            if v >= beta:
+            if v_beta(v, beta):
                 return v
             alpha = prune_to1([alpha, v])
         return v
@@ -172,7 +188,7 @@ def pruneO(curr_board, alpha, beta, stats):
         v = float("inf")
         for state in possible_moves(curr_board, 2):
             v = prune_to2([v, pruneX(state, alpha, beta, stats)])
-            if v <= alpha:
+            if v_alpha(v, alpha):
                 return v
             beta = prune_to2([beta, v])
         return v
