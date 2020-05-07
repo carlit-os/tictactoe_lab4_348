@@ -73,6 +73,35 @@ def closer_to1(outcomes):
     pass
 
 
+def prune_to1(outcomes):
+    # one of [1, 0, 2, inf, -inf]
+    if float("inf") in outcomes:
+        return float("inf")
+    elif 1 in outcomes:  # xwins
+        return 1
+    elif 0 in outcomes:  # tie
+        return 0
+    elif 2 in outcomes:  # O wins
+        return 2
+    else:
+        return float("-inf")
+    pass
+
+
+def prune_to2(outcomes):
+    if float("-inf") in outcomes:
+        return float("-inf")
+    elif 2 in outcomes:  # O wins
+        return 2
+    elif 0 in outcomes:  # tie
+        return 0
+    elif 1 in outcomes:  # x wins
+        return 1
+    else:
+        return float("inf")
+    pass
+
+
 def closer_to2(outcomes):
     if 2 in outcomes:
         return 2
@@ -121,9 +150,42 @@ def minmax_tictactoe(board, turn):
         return agentO(minmax_stats.get_board(), minmax_stats)
 
 
+def pruneX(curr_board, alpha, beta, stats):
+    stats.set_board(curr_board)
+    if stats.is_terminal():
+        return stats.get_outcome()
+    else:
+        v = float("-inf")
+        for state in possible_moves(curr_board, 1):
+            v = prune_to1([v, pruneO(state, alpha, beta, stats)])
+            if v >= beta:
+                return v
+            alpha = prune_to1([alpha, v])
+        return v
+
+
+def pruneO(curr_board, alpha, beta, stats):
+    stats.set_board(curr_board)
+    if stats.is_terminal():
+        return stats.get_outcome()
+    else:
+        v = float("inf")
+        for state in possible_moves(curr_board, 2):
+            v = prune_to2([v, pruneX(state, alpha, beta, stats)])
+            if v <= alpha:
+                return v
+            beta = prune_to2([beta, v])
+        return v
+
+
 def abprun_tictactoe(board, turn):
     # put your code here: it must return common.constants.X(1), common.constants.O(2) or common.constants.NONE(0) for
     # tie. use the function common.game_status(board), to evaluate a board it returns common.constants.X(1) if X wins,
     # common.constants.O(2) if O wins or common.constants.NONE(0) if tie or game is not finished the program will keep
     # track of the number of boards evaluated result = common.game_status(board);
-    return common.constants.NONE
+    minmax_stats = game_stats(board, turn)
+
+    if turn == common.constants.X:
+        return pruneX(board, float("-inf"), float("inf"), minmax_stats)
+    else:
+        return pruneO(board, float("-inf"), float("inf"), minmax_stats)
